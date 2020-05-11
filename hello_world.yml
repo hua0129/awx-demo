@@ -2,7 +2,7 @@
   gather_facts: false
   tasks:
     - name: hello world 
-      shell: Hello world!
+      shell: echo Hello world!
       register: out
 
     - debug: msg={{out}} 
