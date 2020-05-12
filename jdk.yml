@@ -1,0 +1,62 @@
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: remove yum lock
+      file: name=/var/run/yum.pid state=absent
+
+    - name: Uninstall JDK
+      yum:
+        state: absent
+        name:
+          - "java*"
+          - "jdk*"
+          - "oracle-j2sdk*"
+
+    - name: Make directory of java home
+      file: name={{ item }} state=directory mode=0755
+      with_items:
+        - "/usr/lib/jvm"
+
+    - name: unzip jdk gz
+      unarchive:
+        src: "{{CACHE_DIR}}/{{JDK_GZ}}"
+        dest: /usr/lib/jvm
+
+    - name: Verify jdk directory
+      shell:  "[ ! -d /usr/lib/jvm/{{JDK_VERSION}}/bin ] && ls /usr/lib/jvm/{{JDK_VERSION}}/bin && exit 1; echo ok"
+
+    - name: backup /etc/profile
+      shell: |
+        file_path=/etc/profile
+        [ ! -f ${file_path}.backup -a -f ${file_path} ] && /bin/cp -f ${file_path} ${file_path}.backup; exit 0
+
+    - name: Run set_java.sh to configure JAVA_HOME
+      shell: |
+        JAVA_HOME="/usr/lib/jvm/{{ JDK_VERSION }}"
+        alternatives --install /usr/bin/java java ${JAVA_HOME}/bin/java 1
+        alternatives --set java ${JAVA_HOME}/bin/java
+        export JAVA_HOME
+        sed -i '/^#java$/,/^#javaEnd$/ d' /etc/profile
+        echo '#java' >> /etc/profile
+        echo "export JAVA_HOME=${JAVA_HOME}" >> /etc/profile
+        echo 'export JRE_HOME=${JAVA_HOME}/jre' >> /etc/profile
+        echo 'export CLASSPATH=.:${JRE_HOME}/lib/rt.jar:${JAVA_HOME}/lib/dt.jar:${JAVA_HOME}/lib/tools.jar' >> /etc/profile
+        echo 'export PATH=${JAVA_HOME}/bin:${JAVA_HOME}/jre/bin:$PATH' >> /etc/profile
+        echo '#javaEnd' >> /etc/profile
+        source /etc/profile
+        echo "JAVA_HOME=$JAVA_HOME"
+        echo "PATH=$PATH"
+        echo -n "java version:"
+        java -version
+        mkdir -p /usr/java
+        rm -f /usr/java/default
+        rm -f /usr/java/jdk1.8
+        rm -f /usr/lib/jvm/j2sdk1.8-oracle
+        ln -s ${JAVA_HOME} /usr/java/default
+        ln -s ${JAVA_HOME} /usr/java/jdk1.8
+        ln -s ${JAVA_HOME} /usr/lib/jvm/j2sdk1.8-oracle
+      register: command_out
+
+    - debug: msg={{command_out.stdout_lines}}
+
+
