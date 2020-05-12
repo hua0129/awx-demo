@@ -1,0 +1,13 @@
+
+https://github.com/hua0129/awx-demo.git
+
+3e2f5cdd08e1fe1296617e4d34d78c1138f67472
+
+ansible_host: 192.168.195.140
+
+ansible_host: 192.168.195.141
+
+
+CACHE_DIR: /var/lib/awx/projects/resources
+JDK_GZ: jdk-8u141-linux-x64.tar.gz
+JDK_VERSION: jdk1.8.0_141
