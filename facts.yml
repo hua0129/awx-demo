@@ -12,3 +12,10 @@
       register: out
 
     - debug: msg={{out}}
+
+    - name: pwd
+      shell: pwd
+      register: out
+      connection: local
+
+    - debug: msg={{out}}
