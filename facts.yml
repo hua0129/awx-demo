@@ -14,7 +14,7 @@
     - debug: msg={{out}}
 
     - name: pwd
-      shell: pwd
+      shell: ls -R /
       register: out
       connection: local
 
