@@ -46,7 +46,8 @@
         source /etc/profile
         echo "JAVA_HOME=$JAVA_HOME"
         echo "PATH=$PATH"
-        echo -n "java version:"
+        echo "java version:"
+        sleep 2
         java -version
         mkdir -p /usr/java
         rm -f /usr/java/default

@@ -5,4 +5,4 @@
       shell: echo Hello world!
       register: out
 
-    - debug: msg={{out}} 
+    - debug: msg={{out.stdout}}
