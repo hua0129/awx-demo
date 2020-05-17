@@ -1,0 +1,37 @@
+- name: "play : test play"
+  hosts: cdh_cluster
+  remote_user: root
+  gather_facts: no
+  vars:
+    vvv: 'True'
+  tasks:
+    - name: define var
+      shell: echo 'hello'
+      register: out
+
+    - name: find 163 repo
+      shell: find `pwd` -name "CentOS-7-163.repo" | awk 'NR==1'
+      register: out
+      connection: local
+
+    - name: show debug
+      debug: msg="{{out.stdout}}"
+
+    - name: find 163 repo
+      shell: find / -name "CentOS-7-163.repo" | awk 'NR==1'
+      register: out
+      when: out.stdout == 'hello'
+
+    - name: backup /etc/yum.repos.d/CentOS-Base.repo
+      shell: |
+        file_path=/etc/yum.repos.d/CentOS-Base.repo
+        [ ! -f ${file_path}.backup -a -f ${file_path} ] && /bin/cp -f ${file_path} ${file_path}.backup; exit 0
+      when: out.stdout != 'hello'
+
+    - name: Update yum repo to 163
+      copy: src="{{out.stdout}}" dest=/etc/yum.repos.d/CentOS-Base.repo
+      register: out
+      when: out.stdout != 'hello'
+
+
+

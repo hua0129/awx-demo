@@ -1,0 +1,9 @@
+- name: "play : test play"
+  hosts: all
+  remote_user: root
+  gather_facts: no
+  tasks:
+    - name: ping
+      ping: 
+        data: pong 
+

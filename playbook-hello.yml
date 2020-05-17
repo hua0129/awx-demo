@@ -1,0 +1,12 @@
+- name: "play : test play"
+  hosts: all
+  remote_user: root
+  gather_facts: no
+  vars:
+    vvv: 'True'
+  tasks:
+    - name: test
+      shell: echo "Hello, world."
+      register: out
+    - debug: msg={{out.stdout}}
+

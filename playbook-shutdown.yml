@@ -1,0 +1,13 @@
+- name: "play : test play"
+  hosts: all
+  remote_user: root
+  gather_facts: no
+  vars:
+    vvv: 'True'
+  tasks:
+
+    - name: Restart server
+      command: /sbin/shutdown -h +1
+      async: 0
+      poll: 0
+      ignore_errors: true
